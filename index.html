@@ -16,50 +16,50 @@
 <style>
   /* Layout: una columna angosta, título arriba, un campo ancho con su botón pegado y el aviso de resultado justo debajo. */
   :root {
-    --bg: #EFF3F1;
-    --surface: #FFFFFF;
-    --fg: #16211D;
-    --muted: #51615B;
-    --line: #C3D0CA;
-    --accent: #0C6A5A;
+    --bg: #FFFFFF;
+    --surface: #FFF8F4;
+    --fg: #756966;
+    --muted: #8B7C77;
+    --line: #DECFC8;
+    --accent: #FF6900;
     --accent-fg: #FFFFFF;
-    --ok: #14683A;
-    --ok-bg: #E4F3EA;
-    --err: #B0261C;
-    --err-bg: #FCEBE9;
+    --ok: #B94D00;
+    --ok-bg: #FFF0E6;
+    --err: #B83A2D;
+    --err-bg: #FDECEA;
     --font-display: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0E1513;
-      --surface: #16201C;
-      --fg: #E5EEEA;
-      --muted: #9DB0A8;
-      --line: #2D3B36;
-      --accent: #52C7AE;
-      --accent-fg: #06201A;
-      --ok: #7FD9A5;
-      --ok-bg: #12301F;
-      --err: #FF9C93;
-      --err-bg: #3A1D1A;
-      color-scheme: dark;
+      --bg: #FFFFFF;
+      --surface: #FFF8F4;
+      --fg: #756966;
+      --muted: #8B7C77;
+      --line: #DECFC8;
+      --accent: #FF6900;
+      --accent-fg: #FFFFFF;
+      --ok: #B94D00;
+      --ok-bg: #FFF0E6;
+      --err: #B83A2D;
+      --err-bg: #FDECEA;
+      color-scheme: light;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0E1513;
-    --surface: #16201C;
-    --fg: #E5EEEA;
-    --muted: #9DB0A8;
-    --line: #2D3B36;
-    --accent: #52C7AE;
-    --accent-fg: #06201A;
-    --ok: #7FD9A5;
-    --ok-bg: #12301F;
-    --err: #FF9C93;
-    --err-bg: #3A1D1A;
-    color-scheme: dark;
+    --bg: #FFFFFF;
+    --surface: #FFF8F4;
+    --fg: #756966;
+    --muted: #8B7C77;
+    --line: #DECFC8;
+    --accent: #FF6900;
+    --accent-fg: #FFFFFF;
+    --ok: #B94D00;
+    --ok-bg: #FFF0E6;
+    --err: #B83A2D;
+    --err-bg: #FDECEA;
+    color-scheme: light;
   }
 
   body {
@@ -74,6 +74,12 @@
   }
   .wrap { max-width: 36rem; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
   header { display: flex; flex-direction: column; gap: 0.75rem; }
+  .brand-logo {
+    align-self: flex-start;
+    width: min(13.75rem, 52vw);
+    height: auto;
+    display: block;
+  }
   h1 {
     font-family: var(--font-display);
     font-weight: 700;
@@ -152,6 +158,7 @@
 <body>
 <main class="wrap">
   <header>
+    <img class="brand-logo" src="logos/WhatsApp%20Image%202026-11-10%20at%2019.59.59.jpeg" alt="Arplus">
     <h1>Descarga tu PDF</h1>
     <p class="lead">Escribe tu código y el documento se descarga. Si el código no existe, la página te avisa.</p>
   </header>
