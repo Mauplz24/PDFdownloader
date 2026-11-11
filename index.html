@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  [hidden] { display: none !important; }
+</style>
+<title>Descarga por código</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  /* Layout: una columna angosta, título arriba, un campo ancho con su botón pegado y el aviso de resultado justo debajo. */
+  :root {
+    --bg: #EFF3F1;
+    --surface: #FFFFFF;
+    --fg: #16211D;
+    --muted: #51615B;
+    --line: #C3D0CA;
+    --accent: #0C6A5A;
+    --accent-fg: #FFFFFF;
+    --ok: #14683A;
+    --ok-bg: #E4F3EA;
+    --err: #B0261C;
+    --err-bg: #FCEBE9;
+    --font-display: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1513;
+      --surface: #16201C;
+      --fg: #E5EEEA;
+      --muted: #9DB0A8;
+      --line: #2D3B36;
+      --accent: #52C7AE;
+      --accent-fg: #06201A;
+      --ok: #7FD9A5;
+      --ok-bg: #12301F;
+      --err: #FF9C93;
+      --err-bg: #3A1D1A;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1513;
+    --surface: #16201C;
+    --fg: #E5EEEA;
+    --muted: #9DB0A8;
+    --line: #2D3B36;
+    --accent: #52C7AE;
+    --accent-fg: #06201A;
+    --ok: #7FD9A5;
+    --ok-bg: #12301F;
+    --err: #FF9C93;
+    --err-bg: #3A1D1A;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.55;
+    padding-block: clamp(2rem, 9vh, 5rem);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 36rem; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
+  header { display: flex; flex-direction: column; gap: 0.75rem; }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 7vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  .lead { margin: 0; color: var(--muted); font-size: 1.0625rem; max-width: 65ch; }
+
+  form { display: flex; flex-direction: column; gap: 0.5rem; }
+  label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .field { display: flex; flex-wrap: wrap; gap: 0.625rem; }
+  input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    color: var(--fg);
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+  }
+  input::placeholder { color: var(--muted); opacity: 0.8; }
+  input[aria-invalid="true"] { border-color: var(--err); }
+  button {
+    flex: 0 0 auto;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-fg);
+    background: var(--accent);
+    border: 1.5px solid var(--accent);
+    border-radius: 10px;
+    padding: 0.85rem 1.5rem;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.6; cursor: progress; }
+  input:focus-visible, button:focus-visible, .result a:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    input, button { transition: border-color 0.15s ease, opacity 0.15s ease; }
+  }
+
+  .result {
+    margin-top: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  .result[data-state="invalid"], .result[data-state="error"] { background: var(--err-bg); border-color: var(--err); }
+  .result[data-state="ok"] { background: var(--ok-bg); border-color: var(--ok); }
+  .result-title { margin: 0; font-weight: 600; }
+  .result[data-state="invalid"] .result-title, .result[data-state="error"] .result-title { color: var(--err); }
+  .result[data-state="ok"] .result-title { color: var(--ok); }
+  .result-detail { margin: 0; color: var(--fg); }
+  .result a { color: var(--accent); font-weight: 600; width: fit-content; }
+</style>
+
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>Descarga tu PDF</h1>
+    <p class="lead">Escribe tu código y el documento se descarga. Si el código no existe, la página te avisa.</p>
+  </header>
+
+  <form id="code-form" novalidate autocomplete="off">
+    <label for="code-input">Código</label>
+    <div class="field">
+      <input id="code-input" name="code" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escribe tu código" aria-describedby="result">
+      <button id="submit-btn" type="submit">Descargar</button>
+    </div>
+    <div id="result" class="result" role="status" aria-live="polite" hidden></div>
+  </form>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // Códigos válidos. La clave es el código en minúsculas y sin acentos.
+  // "file" es el PDF publicado junto a la página; "name" es el nombre con el que se guarda.
+  var CODES = {
+    "ecmx-246/26": { file: "pdfs/ejemplo-1.pdf", name: "documento.pdf" }
+  };
+
+  var form = document.getElementById("code-form");
+  var input = document.getElementById("code-input");
+  var button = document.getElementById("submit-btn");
+  var result = document.getElementById("result");
+
+  var downloadsReady = (window.claude && typeof window.claude.use === "function")
+    ? window.claude.use("downloads").catch(function () { return null; })
+    : Promise.resolve(null);
+
+  function normalize(text) {
+    return text.normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
+  }
+
+  function show(state, title, detail, link) {
+    result.hidden = false;
+    result.dataset.state = state;
+    result.replaceChildren();
+    var t = document.createElement("p");
+    t.className = "result-title";
+    t.textContent = title;
+    result.appendChild(t);
+    if (detail) {
+      var d = document.createElement("p");
+      d.className = "result-detail";
+      d.textContent = detail;
+      result.appendChild(d);
+    }
+    if (link) {
+      var a = document.createElement("a");
+      a.href = link.href;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = link.text;
+      result.appendChild(a);
+    }
+  }
+
+  function setBusy(busy) {
+    button.disabled = busy;
+    button.textContent = busy ? "Preparando…" : "Descargar";
+  }
+
+  input.addEventListener("input", function () {
+    input.removeAttribute("aria-invalid");
+  });
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    var key = normalize(input.value);
+
+    if (!key) {
+      input.setAttribute("aria-invalid", "true");
+      show("invalid", "Código inválido", "Escribe tu código en el campo.");
+      input.focus();
+      return;
+    }
+    if (!Object.prototype.hasOwnProperty.call(CODES, key)) {
+      input.setAttribute("aria-invalid", "true");
+      show("invalid", "Código inválido", "Revisa que esté bien escrito e inténtalo de nuevo.");
+      input.select();
+      return;
+    }
+
+    var entry = CODES[key];
+    var openLink = { href: entry.file, text: "Abrir el PDF" };
+    input.removeAttribute("aria-invalid");
+    setBusy(true);
+    show("working", "Código válido", "Preparando tu descarga…");
+
+    try {
+      var downloads = await downloadsReady;
+      if (!downloads) {
+        var link = document.createElement("a");
+        link.href = entry.file;
+        link.download = entry.name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        show("ok", "Código válido", "Tu PDF se descargó.");
+        return;
+      }
+      var response = await fetch(entry.file);
+      if (!response.ok) { throw new Error("http " + response.status); }
+      var blob = await response.blob();
+      await downloads.save({ filename: entry.name, data: blob });
+      show("ok", "Código válido", "Tu PDF se descargó.");
+    } catch (err) {
+      var code = err && err.code;
+      if (code === "declined") {
+        show("working", "Descarga cancelada", "Pulsa Descargar para intentarlo otra vez.");
+      } else if (code === "rate_limited") {
+        show("working", "Un momento", "Hay otra descarga en curso. Espera unos segundos e inténtalo de nuevo.");
+      } else {
+        show("error", "No se pudo descargar", "Inténtalo de nuevo en unos segundos.", openLink);
+      }
+    } finally {
+      setBusy(false);
+    }
+  });
+})();
+</script>
+</body>
+</html>
